@@ -125,8 +125,46 @@ document.body.appendChild(sunLabel);
 // ---- PLANETS ----
 function makePlanet(texturePath, size, orbitRadius, orbitSpeed, tilt = 0, glowColor = 0x4444ff) {
   const texture = loader.load(texturePath);
+
+  // Custom shader for realistic sun lighting
+  const mat = new THREE.ShaderMaterial({
+    uniforms: {
+      map:      { value: texture },
+      sunDir:   { value: new THREE.Vector3(1, 0, 0) },
+      ambience: { value: 0.15 }
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      varying vec3 vNormal;
+      varying vec3 vWorldPos;
+      void main() {
+        vUv = uv;
+        vNormal = normalize(normalMatrix * normal);
+        vWorldPos = (modelMatrix * vec4(position, 1.0)).xyz;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform sampler2D map;
+      uniform vec3 sunDir;
+      uniform float ambience;
+      varying vec2 vUv;
+      varying vec3 vNormal;
+      varying vec3 vWorldPos;
+      void main() {
+        vec4 texColor = texture2D(map, vUv);
+        vec3 norm = normalize(vNormal);
+        vec3 toSun = normalize(sunDir - vWorldPos);
+        float light = dot(norm, toSun);
+        // Soft gradient from dark side to light side
+        float lighting = smoothstep(-0.6, 0.8, light);
+        float final = ambience + (1.0 - ambience) * lighting;
+        gl_FragColor = vec4(texColor.rgb * final, texColor.a);
+      }
+    `
+  });
+
   const geo = new THREE.SphereGeometry(size, 64, 64);
-  const mat = new THREE.MeshBasicMaterial({ map: texture });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.rotation.z = tilt;
 
@@ -147,7 +185,7 @@ function makePlanet(texturePath, size, orbitRadius, orbitSpeed, tilt = 0, glowCo
   scene.add(pivot);
   mesh.position.x = orbitRadius;
 
-  return { mesh, pivot, orbitRadius, orbitSpeed };
+  return { mesh, pivot, orbitRadius, orbitSpeed, mat };
 }
 
 // Mars - Photography
@@ -329,10 +367,16 @@ function animate() {
   // Rotate sun
   sun.rotation.y = t * 0.1;
 
-  // Orbit planets
+ // Orbit planets
   planets.forEach(p => {
     p.pivot.rotation.y += p.orbitSpeed;
     p.mesh.rotation.y  += 0.005;
+    // Update sun direction in shader so shadow stays sun-facing
+    if (p.mat && p.mat.uniforms) {
+      const worldPos = new THREE.Vector3();
+      p.mesh.getWorldPosition(worldPos);
+      p.mat.uniforms.sunDir.value.set(0, 0, 0);
+    }
   });
 
 // Smooth easing towards target
