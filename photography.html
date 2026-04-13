@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wumara — Photography</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: #f5f0e8;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ---- HEADER ---- */
+    header {
+      padding: 40px 60px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .site-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #8b6f47;
+      text-decoration: none;
+    }
+
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      color: #2c1810;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .back-btn {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #8b6f47;
+      text-decoration: none;
+      border-bottom: 1px solid #8b6f47;
+      padding-bottom: 2px;
+      transition: opacity 0.2s;
+    }
+
+    .back-btn:hover { opacity: 0.6; }
+
+    /* ---- MASONRY GRID ---- */
+    .gallery {
+      columns: 3;
+      column-gap: 16px;
+      padding: 40px 60px 80px;
+    }
+
+    @media (max-width: 900px) { .gallery { columns: 2; } }
+    @media (max-width: 600px) { .gallery { columns: 1; } }
+
+    .photo-item {
+      break-inside: avoid;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .photo-item img {
+      width: 100%;
+      display: block;
+      transition: transform 0.4s ease;
+      border-radius: 4px;
+    }
+
+    .photo-item:hover img {
+      transform: scale(1.04);
+    }
+
+    /* Subtle overlay on hover */
+    .photo-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(44, 24, 16, 0.15);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: 4px;
+    }
+
+    .photo-item:hover::after { opacity: 1; }
+
+    /* View icon on hover */
+    .photo-item .view-hint {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      color: white;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 2;
+    }
+
+    .photo-item:hover .view-hint { opacity: 1; }
+
+    /* ---- LIGHTBOX ---- */
+    #lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 12, 8, 0.95);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 40px;
+    }
+
+    #lightbox.active { display: flex; }
+
+    #lightbox img {
+      max-width: 80vw;
+      max-height: 70vh;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    }
+
+    .lightbox-info {
+      margin-top: 28px;
+      text-align: center;
+    }
+
+    .lightbox-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      color: #f5f0e8;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    .lightbox-desc {
+      font-size: 13px;
+      color: rgba(245, 240, 232, 0.5);
+      letter-spacing: 1px;
+      max-width: 500px;
+    }
+
+    .lightbox-close {
+      position: fixed;
+      top: 30px;
+      right: 40px;
+      color: rgba(245, 240, 232, 0.5);
+      font-size: 28px;
+      cursor: pointer;
+      transition: color 0.2s;
+      background: none;
+      border: none;
+      line-height: 1;
+    }
+
+    .lightbox-close:hover { color: #f5f0e8; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="site-name">Wumara</a>
+    <h1 class="page-title">Photography</h1>
+    <a href="index.html" class="back-btn">← Back to Universe</a>
+  </header>
+
+  <div class="gallery" id="gallery"></div>
+
+  <!-- Lightbox -->
+  <div id="lightbox">
+    <button class="lightbox-close" id="lightbox-close">✕</button>
+    <img id="lightbox-img" src="" alt="">
+    <div class="lightbox-info">
+      <div class="lightbox-title" id="lightbox-title"></div>
+      <div class="lightbox-desc" id="lightbox-desc"></div>
+    </div>
+  </div>
+
+  <script>
+    // ---- PHOTO DATA ----
+    // To add a new photo: add a new object to this array!
+    const photos = [
+      { src: './photos/photo1.jpg', title: 'Moss',   desc: 'Castle Rock State Park, CA' },
+      { src: './photos/photo2.jpg', title: 'Oak',  desc: 'this oak tree is in black and white lol' },
+      { src: './photos/photo3.jpg', title: 'San Francisco Commuters', desc: 'by car or by boat, we will get there' },
+      { src: './photos/photo4.jpg', title: "37.8154'N x 122.3714'W",  desc: 'this feels so 2012' },
+      { src: './photos/photo5.jpg', title: "Richard's Photo Op",  desc: 'what if I pushed him lol' },
+      { src: './photos/photo6.jpg', title: 'Beach Day on Mars',  desc: "next spring break we're going to earth" },
+      { src: './photos/photo7.jpg', title: 'Backcountry', desc: "just cause the livins slow don't mean we're missing out" },
+      { src: './photos/photo8.jpg', title: 'Bay Goals',desc: 'some day we will get there' },
+    ];
+
+    // ---- BUILD GALLERY ----
+    const gallery = document.getElementById('gallery');
+
+    photos.forEach((photo, i) => {
+      const item = document.createElement('div');
+      item.classList.add('photo-item');
+      item.innerHTML = `
+        <img src="${photo.src}" alt="${photo.title}" loading="lazy">
+        <span class="view-hint">View</span>
+      `;
+      item.addEventListener('click', () => openLightbox(photo));
+      gallery.appendChild(item);
+    });
+
+    // ---- LIGHTBOX ----
+    const lightbox     = document.getElementById('lightbox');
+    const lightboxImg  = document.getElementById('lightbox-img');
+    const lightboxTitle= document.getElementById('lightbox-title');
+    const lightboxDesc = document.getElementById('lightbox-desc');
+    const lightboxClose= document.getElementById('lightbox-close');
+
+    function openLightbox(photo) {
+      lightboxImg.src      = photo.src;
+      lightboxTitle.textContent = photo.title;
+      lightboxDesc.textContent  = photo.desc;
+      lightbox.classList.add('active');
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+    }
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
+
+</body>
+</html>

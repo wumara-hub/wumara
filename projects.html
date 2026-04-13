@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wumara — Projects</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Inter:wght@300;400&family=Space+Mono:ital@0;1&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #e8ede0;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ---- SCROLLING COLLAGE ---- */
+    .collage {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .collage-row {
+      display: flex;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .collage-row.row-1 { animation: scroll-left 80s linear infinite; }
+    .collage-row.row-2 { animation: scroll-right 90s linear infinite; }
+    .collage-row.row-3 { animation: scroll-left 70s linear infinite; }
+    .collage-row.row-4 { animation: scroll-right 85s linear infinite; }
+
+    @keyframes scroll-left {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    @keyframes scroll-right {
+      0%   { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    .collage-item {
+      flex-shrink: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .collage-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.85) brightness(0.95);
+      transition: filter 0.4s ease;
+    }
+
+    .collage-item:hover img {
+      filter: saturate(1.1) brightness(1.05);
+    }
+
+    /* Varied sizes */
+    .size-sm  { width: 180px; height: 200px; }
+    .size-md  { width: 240px; height: 200px; }
+    .size-lg  { width: 320px; height: 200px; }
+    .size-sq  { width: 200px; height: 200px; }
+    .size-tal { width: 160px; height: 200px; }
+
+    /* ---- SOFT VIGNETTE ---- */
+    .vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center,
+        transparent 30%,
+        rgba(232, 237, 224, 0.4) 60%,
+        rgba(232, 237, 224, 0.85) 100%
+      );
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* ---- CENTER BOX ---- */
+    .center-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* Organic blob shape behind the text */
+    .blob {
+      position: absolute;
+      width: 380px;
+      height: 280px;
+      background: rgba(232, 237, 224, 0.92);
+      border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+      filter: blur(2px);
+      z-index: -1;
+      animation: blob-morph 8s ease-in-out infinite;
+    }
+
+    @keyframes blob-morph {
+      0%, 100% { border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%; }
+      25%       { border-radius: 40% 60% 45% 55% / 60% 40% 55% 45%; }
+      50%       { border-radius: 55% 45% 60% 40% / 45% 55% 50% 60%; }
+      75%       { border-radius: 45% 55% 40% 60% / 55% 45% 60% 40%; }
+    }
+
+    .loading-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #7a9a6a;
+    }
+
+    .loading-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 400;
+      font-style: italic;
+      color: #2a3a2a;
+      line-height: 1.2;
+    }
+
+    /* Animated dots */
+    .loading-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #7a9a6a;
+      animation: dot-pulse 1.4s ease-in-out infinite;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes dot-pulse {
+      0%, 100% { transform: scale(0.6); opacity: 0.3; }
+      50%       { transform: scale(1); opacity: 1; }
+    }
+
+    .loading-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: #9aaa8a;
+      letter-spacing: 1px;
+      font-style: italic;
+    }
+
+    /* Organic decorative ring */
+    .organic-ring {
+      position: absolute;
+      width: 440px;
+      height: 340px;
+      border: 1.5px solid rgba(122, 154, 106, 0.25);
+      border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+      animation: blob-morph 8s ease-in-out infinite reverse;
+      z-index: -1;
+    }
+
+    .organic-ring-2 {
+      position: absolute;
+      width: 500px;
+      height: 400px;
+      border: 1px solid rgba(122, 154, 106, 0.12);
+      border-radius: 55% 45% 60% 40% / 45% 55% 50% 60%;
+      animation: blob-morph 12s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    /* ---- NAV ---- */
+    .back-btn {
+      position: fixed;
+      top: 30px;
+      left: 40px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #7a9a6a;
+      text-decoration: none;
+      border-bottom: 1px solid #7a9a6a;
+      padding-bottom: 2px;
+      transition: opacity 0.2s;
+      z-index: 20;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .back-btn:hover { opacity: 0.6; }
+
+    .site-name {
+      position: fixed;
+      top: 30px;
+      right: 40px;
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #7a9a6a;
+      text-decoration: none;
+      z-index: 20;
+    }
+
+    /* Data readout aesthetic in corner */
+    .data-readout {
+      position: fixed;
+      bottom: 30px;
+      left: 40px;
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      color: rgba(122, 154, 106, 0.5);
+      letter-spacing: 1px;
+      line-height: 1.8;
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="index.html" class="back-btn">← Universe</a>
+  <a href="index.html" class="site-name">Wumara</a>
+
+  <div class="data-readout">
+    PROJECTS_MODULE.exe<br>
+    STATUS: initializing...<br>
+    ETA: unknown
+  </div>
+
+  <!-- COLLAGE -->
+  <div class="collage" id="collage"></div>
+
+  <!-- VIGNETTE -->
+  <div class="vignette"></div>
+
+  <!-- CENTER BOX -->
+  <div class="center-box">
+    <div class="organic-ring-2"></div>
+    <div class="organic-ring"></div>
+    <div class="blob"></div>
+    <div class="loading-label">// projects</div>
+    <div class="loading-title">Something is<br>growing here</div>
+    <div class="loading-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    <div class="loading-sub">check back soon</div>
+  </div>
+
+  <script>
+    const photos = Array.from({ length: 26 }, (_, i) => `./project-photos/p${i + 1}.jpg`);
+
+    const sizes = ['size-sm', 'size-md', 'size-lg', 'size-sq', 'size-tal'];
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function buildRow(rowClass, photos) {
+      const row = document.createElement('div');
+      row.classList.add('collage-row', rowClass);
+
+      // Double the photos so loop is seamless
+      const doubled = [...shuffle(photos), ...shuffle(photos)];
+      doubled.forEach(src => {
+        const item = document.createElement('div');
+        const size = sizes[Math.floor(Math.random() * sizes.length)];
+        item.classList.add('collage-item', size);
+        item.innerHTML = `<img src="${src}" loading="lazy" alt="">`;
+        row.appendChild(item);
+      });
+
+      return row;
+    }
+
+    const collage = document.getElementById('collage');
+    collage.appendChild(buildRow('row-1', photos));
+    collage.appendChild(buildRow('row-2', photos));
+    collage.appendChild(buildRow('row-3', photos));
+    collage.appendChild(buildRow('row-4', photos));
+  </script>
+
+</body>
+</html>
