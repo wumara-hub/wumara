@@ -5,46 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wumara — Videos</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap');
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background-color: #0a0a08;
-      font-family: 'Cormorant Garamond', serif;
-      color: #e8e4dc;
+      background: #f2ebe0;
+      font-family: 'Inter', sans-serif;
+      color: #2a1f14;
       min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* ---- GRAIN OVERLAY ---- */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.035;
-      pointer-events: none;
-      z-index: 1000;
-    }
-
-    /* ---- ART DECO LINES ---- */
-    .deco-line {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: #5a4a2a;
-      font-size: 10px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-    }
-
-    .deco-line::before,
-    .deco-line::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #5a4a2a, transparent);
     }
 
     /* ---- HERO ---- */
@@ -56,96 +25,104 @@
       justify-content: center;
       position: relative;
       overflow: hidden;
+      background: linear-gradient(160deg, #1a0a2e 0%, #2d1b4e 25%, #8b3a3a 60%, #d4651a 80%, #e8a030 100%);
     }
 
-    /* Forest silhouette at bottom */
-    .hero::after {
-      content: '';
+    .orb {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 180px;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 180'%3E%3Cpath fill='%230a0a08' d='M0,180 L0,120 L40,80 L80,120 L100,60 L130,110 L160,40 L190,100 L220,70 L250,110 L280,50 L310,90 L340,30 L370,80 L400,55 L430,95 L460,35 L490,85 L520,60 L550,100 L580,40 L610,90 L640,20 L670,75 L700,50 L730,95 L760,30 L790,80 L820,55 L850,100 L880,40 L910,85 L940,60 L970,105 L1000,35 L1030,80 L1060,50 L1090,90 L1120,30 L1150,75 L1180,55 L1210,95 L1240,40 L1270,85 L1300,60 L1330,100 L1360,45 L1400,90 L1440,70 L1440,180 Z'/%3E%3C/svg%3E");
-      background-size: cover;
-      background-repeat: no-repeat;
-      z-index: 2;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.5;
+      animation: orb-float ease-in-out infinite;
     }
 
-    /* Mountain silhouette */
-    
+    .orb-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #e85d3a, transparent);
+      top: -100px;
+      right: -100px;
+      animation-duration: 8s;
+    }
+
+    .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #4a90d9, transparent);
+      bottom: -80px;
+      left: -80px;
+      animation-duration: 10s;
+      animation-delay: -3s;
+    }
+
+    .orb-3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, #e8a030, transparent);
+      top: 40%;
+      left: 30%;
+      animation-duration: 12s;
+      animation-delay: -6s;
+    }
+
+    @keyframes orb-float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%       { transform: translate(30px, -20px) scale(1.05); }
+      66%       { transform: translate(-20px, 30px) scale(0.95); }
+    }
 
     .hero-content {
       position: relative;
-      z-index: 3;
+      z-index: 2;
       text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
     }
 
-    /* Art deco top ornament */
-    .hero-ornament {
+    .hero-eyebrow {
       font-size: 11px;
-      letter-spacing: 6px;
+      letter-spacing: 4px;
       text-transform: uppercase;
-      color: #8a6a2a;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .hero-ornament::before,
-    .hero-ornament::after {
-      content: ' ✦ ';
-      color: #8a6a2a;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 16px;
     }
 
     .hero-title {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(80px, 18vw, 200px);
+      font-size: clamp(80px, 16vw, 180px);
       font-weight: 700;
-      color: #e8e4dc;
-      letter-spacing: -2px;
-      line-height: 1;
-      text-shadow: 0 0 80px rgba(138, 106, 42, 0.2);
-    }
-
-    .hero-subtitle {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 18px;
-      color: #5a4a2a;
-      letter-spacing: 2px;
+      color: #fff;
+      letter-spacing: -3px;
+      line-height: 0.9;
+      text-shadow: 0 0 80px rgba(232, 160, 48, 0.3);
     }
 
     .hero-scroll-hint {
       position: absolute;
-      bottom:-30px;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
       font-size: 10px;
       letter-spacing: 3px;
       text-transform: uppercase;
-      color: #3a3a2a;
-      font-family: 'Inter', sans-serif;
+      color: rgba(255,255,255,0.3);
       animation: bounce 2s ease-in-out infinite;
-      z-index: 3;
+      z-index: 2;
     }
 
     @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(6px); }
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(6px); }
     }
 
     .hero-back {
       position: absolute;
       top: 40px;
-      left: 60px;
+      left: 50px;
       font-size: 11px;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: #4a4a3a;
+      color: rgba(255,255,255,0.4);
       text-decoration: none;
-      font-family: 'Inter', sans-serif;
-      border-bottom: 1px solid #4a4a3a;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
       padding-bottom: 2px;
       transition: opacity 0.2s;
       z-index: 10;
@@ -156,487 +133,121 @@
     .hero-name {
       position: absolute;
       top: 40px;
-      right: 60px;
+      right: 50px;
       font-family: 'Playfair Display', serif;
       font-size: 13px;
       letter-spacing: 4px;
       text-transform: uppercase;
-      color: #4a4a3a;
+      color: rgba(255,255,255,0.4);
       text-decoration: none;
       z-index: 10;
     }
 
-    /* ---- MAIN CONTENT ---- */
-    .main-content {
+    /* ---- CATALOGS SECTION ---- */
+    .catalogs-section {
       padding: 80px 60px;
-      max-width: 1100px;
-      margin: 0 auto;
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    /* ---- FEATURED ---- */
-    .featured-section {
-      margin-bottom: 80px;
-    }
-
-    .section-header {
-      margin-bottom: 40px;
-      text-align: center;
-    }
-
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 13px;
-      letter-spacing: 6px;
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 4px;
       text-transform: uppercase;
-      color: #8a6a2a;
-      margin-bottom: 12px;
+      color: #b07040;
+      margin-bottom: 50px;
     }
 
-    .section-rule {
-      width: 60px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #8a6a2a, transparent);
-      margin: 0 auto;
+    .catalogs-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      max-width: 900px;
     }
 
-    .featured-layout {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 50px;
-      align-items: start;
-    }
-
-    .featured-video-wrap {
-      width: 260px;
-      aspect-ratio: 9/16;
-      border-radius: 4px;
-      overflow: hidden;
-      background: #1a1a14;
-      flex-shrink: 0;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    /* Catalog bubble */
+    .catalog-bubble {
+      width: 280px;
+      height: 280px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #e8d5b0, #d4a060);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      gap: 12px;
+      padding: 30px;
+      text-align: center;
       position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 8px 30px rgba(180, 100, 40, 0.2);
+      cursor: pointer;
     }
 
-    /* Art deco corner accents */
-    .featured-video-wrap::before {
+    .catalog-bubble:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(180, 100, 40, 0.3);
+    }
+
+    /* Texture overlay */
+    .catalog-bubble::before {
       content: '';
       position: absolute;
       inset: 0;
-      border: 1px solid rgba(138, 106, 42, 0.2);
-      z-index: 2;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.04;
       pointer-events: none;
-      border-radius: 4px;
     }
 
-    .featured-video-wrap iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    .featured-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 32px;
-      font-weight: 400;
-      font-style: italic;
-      color: #e8e4dc;
-      line-height: 1.3;
-      margin-bottom: 8px;
-    }
-
-    .featured-rule {
-      width: 40px;
-      height: 1px;
-      background: #8a6a2a;
-      margin-bottom: 30px;
-    }
-
-    /* ---- COMMENTS ---- */
-    .comments-label {
-      font-size: 10px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: #5a4a2a;
-      font-family: 'Inter', sans-serif;
-      margin-bottom: 12px;
-    }
-
-    .comment-prompt {
-      font-size: 15px;
-      color: #4a4a3a;
-      margin-bottom: 16px;
-      font-style: italic;
-    }
-
-    .comment-form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-
-    .comment-form textarea {
-      background: #12120f;
-      border: 1px solid #2a2a1a;
-      border-radius: 2px;
-      color: #e8e4dc;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 15px;
-      padding: 12px 16px;
-      resize: none;
-      height: 80px;
-      transition: border-color 0.2s;
-    }
-
-    .comment-form textarea:focus { outline: none; border-color: #5a4a2a; }
-    .comment-form textarea::placeholder { color: #2a2a1a; }
-
-    .comment-submit {
-      align-self: flex-start;
-      background: transparent;
-      border: 1px solid #3a3a2a;
-      border-radius: 2px;
-      color: #5a4a2a;
-      font-family: 'Inter', sans-serif;
+    .catalog-bubble-number {
       font-size: 10px;
       letter-spacing: 3px;
       text-transform: uppercase;
-      padding: 8px 20px;
-      cursor: pointer;
-      transition: all 0.2s;
+      color: rgba(42, 31, 20, 0.4);
     }
 
-    .comment-submit:hover { border-color: #8a6a2a; color: #e8e4dc; }
-
-    .comments-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-height: 220px;
-      overflow-y: auto;
-      padding-right: 8px;
-    }
-
-    .comments-list::-webkit-scrollbar { width: 2px; }
-    .comments-list::-webkit-scrollbar-track { background: #12120f; }
-    .comments-list::-webkit-scrollbar-thumb { background: #3a3a2a; }
-
-    .comment {
-      background: #12120f;
-      border-radius: 2px;
-      padding: 14px 16px;
-      border-left: 1px solid #3a3a2a;
-    }
-
-    .comment-text { font-size: 15px; color: #a8a49c; line-height: 1.6; margin-bottom: 8px; }
-    .comment-meta { font-size: 10px; color: #3a3a2a; letter-spacing: 1px; font-family: 'Inter', sans-serif; }
-
-    /* ---- ACCORDION ---- */
-    .accordion-section { margin-bottom: 60px; }
-
-    .accordion-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 24px 0;
-      cursor: pointer;
-      border-top: 1px solid #2a2a1a;
-      border-bottom: 1px solid #2a2a1a;
-      user-select: none;
-      transition: border-color 0.3s;
-    }
-
-    .accordion-header:hover { border-color: #5a4a2a; }
-
-    .accordion-header-left {
-      display: flex;
-      align-items: baseline;
-      gap: 16px;
-    }
-
-    .accordion-title {
+    .catalog-bubble-title {
       font-family: 'Playfair Display', serif;
       font-size: 28px;
       font-weight: 400;
-      color: #e8e4dc;
+      color: #2a1f14;
+      line-height: 1.2;
     }
 
-    .accordion-count {
+    .catalog-bubble-desc {
+      font-size: 12px;
+      color: rgba(42, 31, 20, 0.5);
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    .catalog-bubble-count {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(42, 31, 20, 0.4);
+      margin-top: 8px;
+    }
+
+    /* Coming soon bubble */
+    .catalog-bubble.coming-soon {
+      background: linear-gradient(135deg, #e8e0d0, #d8c8a8);
+      opacity: 0.5;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .coming-soon-label {
       font-size: 10px;
       letter-spacing: 3px;
       text-transform: uppercase;
-      color: #4a4a3a;
-      font-family: 'Inter', sans-serif;
+      color: rgba(42, 31, 20, 0.3);
     }
-
-    .accordion-arrow {
-      font-size: 18px;
-      color: #5a4a2a;
-      transition: transform 0.4s ease;
-    }
-
-    .accordion-arrow.open { transform: rotate(180deg); }
-
-    .accordion-body {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.5s ease;
-    }
-
-    .accordion-body.open { max-height: 2000px; }
-
-    .accordion-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 20px;
-      padding: 30px 0;
-    }
-
-    /* ---- VIDEO CARDS ---- */
-    .video-card {
-      cursor: pointer;
-      transition: transform 0.3s ease;
-    }
-
-    .video-card:hover { transform: translateY(-4px); }
-
-    .video-thumb {
-      aspect-ratio: 9/16;
-      border-radius: 4px;
-      overflow: hidden;
-      background: #1a1a14;
-      margin-bottom: 12px;
-      position: relative;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    }
-
-    /* Art deco border on cards */
-    .video-thumb::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border: 1px solid rgba(138, 106, 42, 0.15);
-      z-index: 2;
-      pointer-events: none;
-      border-radius: 4px;
-      transition: border-color 0.3s;
-    }
-
-    .video-card:hover .video-thumb::before { border-color: rgba(138, 106, 42, 0.4); }
-
-    .video-thumb iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      pointer-events: none;
-    }
-
-    .video-thumb::after {
-      content: '▶';
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      color: rgba(232, 228, 220, 0);
-      background: rgba(0,0,0,0);
-      transition: all 0.3s;
-      z-index: 3;
-    }
-
-    .video-card:hover .video-thumb::after {
-      color: rgba(232, 228, 220, 0.8);
-      background: rgba(0,0,0,0.5);
-    }
-
-    .video-card-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 14px;
-      font-style: italic;
-      color: #6a6a5a;
-      font-weight: 400;
-      line-height: 1.4;
-      transition: color 0.2s;
-    }
-
-    .video-card:hover .video-card-title { color: #a8a49c; }
-
-    /* ---- LIGHTBOX ---- */
-    #lightbox {
-      position: fixed;
-      inset: 0;
-      background: #080806;
-      z-index: 1000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
-      overflow: hidden;
-    }
-
-    #lightbox.active { display: flex; }
-
-    .emoji-bg {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .floating-emoji {
-      position: absolute;
-      opacity: 0.05;
-      animation: float-drift linear infinite;
-      user-select: none;
-    }
-
-    @keyframes float-drift {
-      0%   { transform: translateY(100vh) rotate(0deg); }
-      100% { transform: translateY(-20vh) rotate(20deg); }
-    }
-
-    .lightbox-layout {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 50px;
-      align-items: start;
-      max-width: 900px;
-      width: 100%;
-      z-index: 1;
-      position: relative;
-    }
-
-    .lightbox-video-wrap {
-      width: 260px;
-      aspect-ratio: 9/16;
-      border-radius: 4px;
-      overflow: hidden;
-      background: #1a1a14;
-      flex-shrink: 0;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-      position: relative;
-    }
-
-    .lightbox-video-wrap::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border: 1px solid rgba(138, 106, 42, 0.3);
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    .lightbox-video-wrap iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    .lightbox-info { padding-top: 10px; }
-
-    .lightbox-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 26px;
-      color: #e8e4dc;
-      font-weight: 400;
-      font-style: italic;
-      margin-bottom: 8px;
-      line-height: 1.3;
-    }
-
-    .lightbox-rule {
-      width: 30px;
-      height: 1px;
-      background: #8a6a2a;
-      margin-bottom: 24px;
-    }
-
-    .emoji-picker-section { margin-bottom: 24px; }
-
-    .emoji-picker-label {
-      font-size: 10px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: #5a4a2a;
-      font-family: 'Inter', sans-serif;
-      margin-bottom: 8px;
-    }
-
-    .emoji-picker-prompt {
-      font-size: 13px;
-      color: #3a3a2a;
-      margin-bottom: 10px;
-      font-style: italic;
-    }
-
-    .emoji-options {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-
-    .emoji-btn {
-      background: #12120f;
-      border: 1px solid #2a2a1a;
-      border-radius: 4px;
-      font-size: 18px;
-      padding: 5px 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      line-height: 1;
-    }
-
-    .emoji-btn:hover { border-color: #5a4a2a; transform: scale(1.1); }
-    .emoji-btn.selected { border-color: #8a6a2a; background: #1a1a10; }
-
-    .emoji-submit {
-      background: transparent;
-      border: 1px solid #3a3a2a;
-      border-radius: 2px;
-      color: #5a4a2a;
-      font-family: 'Inter', sans-serif;
-      font-size: 10px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      padding: 7px 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .emoji-submit:hover { border-color: #8a6a2a; color: #e8e4dc; }
-
-    .lightbox-close {
-      position: fixed;
-      top: 30px;
-      right: 40px;
-      color: rgba(232, 228, 220, 0.2);
-      font-size: 24px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      transition: color 0.2s;
-      line-height: 1;
-      z-index: 10;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .lightbox-close:hover { color: #e8e4dc; }
-
-    .lightbox-comments-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-height: 180px;
-      overflow-y: auto;
-      padding-right: 8px;
-    }
-
-    .lightbox-comments-list::-webkit-scrollbar { width: 2px; }
-    .lightbox-comments-list::-webkit-scrollbar-track { background: #12120f; }
-    .lightbox-comments-list::-webkit-scrollbar-thumb { background: #3a3a2a; }
   </style>
 </head>
 <body>
@@ -645,283 +256,38 @@
   <section class="hero">
     <a href="index.html" class="hero-back">← Universe</a>
     <a href="index.html" class="hero-name">Wumara</a>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
     <div class="hero-content">
-      <div class="hero-ornament">Wumara</div>
+      <div class="hero-eyebrow">Wumara · Visual Work</div>
       <h1 class="hero-title">Videos</h1>
-      <div class="hero-subtitle">a collection of moving pictures
-        
     </div>
     <div class="hero-scroll-hint">↓ scroll</div>
   </section>
 
-  <!-- MAIN -->
-  <div class="main-content">
+  <!-- CATALOGS -->
+  <section class="catalogs-section">
+    <div class="section-label">✦ Catalogs ✦</div>
+    <div class="catalogs-grid">
 
-    <!-- Featured -->
-    <div class="featured-section">
-      <div class="section-header">
-        <div class="section-title">✦ Featured ✦</div>
-        <div class="section-rule"></div>
+      <!-- Collage Core -->
+      <a href="collage-core.html" class="catalog-bubble">
+        <div class="catalog-bubble-number">Series 001</div>
+        <div class="catalog-bubble-title">Collage Core</div>
+        <div class="catalog-bubble-desc">Videos that just seem to go together — connected by music that makes the pictures dance.</div>
+        <div class="catalog-bubble-count">17 videos</div>
+      </a>
+
+      <!-- Placeholder for next series -->
+      <div class="catalog-bubble coming-soon">
+        <div class="catalog-bubble-number">Series 002</div>
+        <div class="catalog-bubble-title">Coming Soon</div>
+        <div class="coming-soon-label">In the works</div>
       </div>
-      <div class="featured-layout">
-        <div class="featured-video-wrap">
-          <iframe src="https://www.youtube.com/embed/kzu3NrZs_dU"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen></iframe>
-        </div>
-        <div>
-          <div class="featured-title">Are you a stranger to yourself?</div>
-          <div class="featured-rule"></div>
-          <div class="comments-label">Reflections</div>
-          <div class="comment-prompt">How did this make you feel? Any advice to share?</div>
-          <div class="comment-form">
-            <textarea placeholder="Share anonymously..." id="featured-textarea"></textarea>
-            <button class="comment-submit" onclick="submitComment('featured', 'featured-textarea', 'featured-comments')">Share</button>
-          </div>
-          <div class="comments-list" id="featured-comments"></div>
-        </div>
-      </div>
+
     </div>
-
-    <!-- Accordion -->
-    <div class="accordion-section">
-      <div class="accordion-header" id="collage-header">
-        <div class="accordion-header-left">
-          <div class="accordion-title">Collage Core</div>
-          <div class="accordion-count">17 videos</div>
-        </div>
-        <div class="accordion-arrow" id="collage-arrow">↓</div>
-      </div>
-      <div class="accordion-body" id="collage-body">
-        <div class="accordion-grid" id="video-grid"></div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- LIGHTBOX -->
-  <div id="lightbox">
-    <div class="emoji-bg" id="emoji-bg"></div>
-    <button class="lightbox-close" id="lightbox-close">✕</button>
-    <div class="lightbox-layout">
-      <div class="lightbox-video-wrap">
-        <iframe id="lightbox-iframe" src=""
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen></iframe>
-      </div>
-      <div class="lightbox-info">
-        <div class="lightbox-title" id="lightbox-title"></div>
-        <div class="lightbox-rule"></div>
-
-        <div class="emoji-picker-section">
-          <div class="emoji-picker-label">React</div>
-          <div class="emoji-picker-prompt">Pick up to 3 — they float here forever</div>
-          <div class="emoji-options" id="emoji-options">
-            🌊 🔥 💭 🌙 ✨ 🫀 🌿 🎭 🌀 💫 🕊️ 🫧 🌸 ⚡ 🪐 🎯 🌑 🦋
-          </div>
-          <button class="emoji-submit" id="emoji-submit">Add to background</button>
-        </div>
-
-        <div class="comments-label">Reflections</div>
-        <div class="comment-prompt">How did this make you feel? Any advice to share?</div>
-        <div class="comment-form">
-          <textarea placeholder="Share anonymously..." id="lightbox-textarea"></textarea>
-          <button class="comment-submit" id="lightbox-submit-btn">Share</button>
-        </div>
-        <div class="lightbox-comments-list" id="lightbox-comments-list"></div>
-      </div>
-    </div>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-    import { getFirestore, collection, addDoc, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBbrSJGdpxVX10GB3C-D4VLGuTc9_UDNTw",
-      authDomain: "my-portfolio-8a3b0.firebaseapp.com",
-      projectId: "my-portfolio-8a3b0",
-      storageBucket: "my-portfolio-8a3b0.firebasestorage.app",
-      messagingSenderId: "699379805284",
-      appId: "1:699379805284:web:8d07df74db82689f798371",
-      measurementId: "G-FF8PD50678"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const videos = [
-      { id: 'kzu3NrZs_dU', title: 'Are you a stranger to yourself?' },
-      { id: '3-Vm-rl66Gc',  title: "You're unstoppable." },
-      { id: 'ECmdzctjk30',  title: "I'm yearning again." },
-      { id: 'pgIkfnsuVUA',  title: 'The needle in a haystack.' },
-      { id: 'yhVTRHNiJjA',  title: "You're a star." },
-      { id: 'EPlJ-cPoRrY',  title: "You're sitting on it." },
-      { id: 'GaS_a_5bkIQ',  title: 'A jungle of noise.' },
-      { id: '9mILRCfAWnc',  title: "It's all crazy." },
-      { id: 'QvVyDmRLcLA',  title: 'This moment is all we have. Will u use it?' },
-      { id: 'xPo0-cCbHHk',  title: 'Still becoming at seventy-eight.' },
-      { id: 'lzTriEtDxdw',  title: "I don't like the word normal." },
-      { id: 'x1yNNcatCYI',  title: "Who's in the driver's seat?", embedId: '-1yNNcatCYI' },
-      { id: 'NZmDfBxCK2s',  title: 'This moment is all we have. Will u use it?' },
-      { id: 'vWMCiN1tqZs',  title: 'See you next time!' },
-      { id: 'D2gtlCWcm0E',  title: 'True rebellion.' },
-      { id: 'VkKlqrxUaWw',  title: 'I think we did.' },
-      { id: 'YzupWKmuVtA',  title: 'Improvise, adapt and overcome.' },
-    ];
-
-    let currentVideoId = null;
-    let selectedEmojis = [];
-
-    // ---- ACCORDION ----
-    const header = document.getElementById('collage-header');
-    const body = document.getElementById('collage-body');
-    const arrow = document.getElementById('collage-arrow');
-
-    header.addEventListener('click', () => {
-      body.classList.toggle('open');
-      arrow.classList.toggle('open');
-    });
-
-    // ---- COMMENTS ----
-    async function submitComment(videoId, textareaId, listId) {
-      const textarea = document.getElementById(textareaId);
-      const text = textarea.value.trim();
-      if (!text) return;
-      textarea.value = '';
-      await addDoc(collection(db, 'comments'), {
-        videoId,
-        text,
-        time: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        createdAt: Date.now()
-      });
-      renderComments(videoId, listId);
-    }
-
-    async function renderComments(videoId, listId) {
-      const list = document.getElementById(listId);
-      list.innerHTML = '<div style="color:#2a2a1a;font-size:12px;font-style:italic;">Loading...</div>';
-      const q = query(collection(db, 'comments'), where('videoId', '==', videoId));
-      const snap = await getDocs(q);
-      const comments = [];
-      snap.forEach(doc => comments.push(doc.data()));
-      comments.sort((a, b) => b.createdAt - a.createdAt);
-      list.innerHTML = comments.length === 0
-        ? '<div style="color:#2a2a1a;font-size:13px;font-style:italic;">No reflections yet — be the first.</div>'
-        : comments.map(c => `
-            <div class="comment">
-              <div class="comment-text">${c.text}</div>
-              <div class="comment-meta">Anonymous · ${c.time}</div>
-            </div>
-          `).join('');
-    }
-
-    window.submitComment = submitComment;
-    renderComments('featured', 'featured-comments');
-
-    // ---- EMOJI ----
-    async function loadEmojis(videoId) {
-      const q = query(collection(db, 'emojis'), where('videoId', '==', videoId));
-      const snap = await getDocs(q);
-      const emojis = [];
-      snap.forEach(doc => emojis.push(doc.data().emoji));
-      return [...new Set(emojis)];
-    }
-
-    async function renderEmojiBackground(videoId) {
-      const bg = document.getElementById('emoji-bg');
-      bg.innerHTML = '';
-      const emojis = await loadEmojis(videoId);
-      emojis.forEach(emoji => {
-        for (let j = 0; j < 6; j++) {
-          const el = document.createElement('div');
-          el.classList.add('floating-emoji');
-          el.textContent = emoji;
-          el.style.left = (10 + Math.random() * 80) + '%';
-          el.style.animationDuration = (15 + Math.random() * 20) + 's';
-          el.style.animationDelay = (-Math.random() * 20) + 's';
-          el.style.fontSize = (50 + Math.random() * 80) + 'px';
-          bg.appendChild(el);
-        }
-      });
-    }
-
-    const emojiOptionsEl = document.getElementById('emoji-options');
-    const emojiList = [...new Intl.Segmenter().segment(emojiOptionsEl.textContent.trim())]
-      .map(s => s.segment.trim()).filter(s => s.length > 0);
-    emojiOptionsEl.innerHTML = '';
-    emojiList.forEach(emoji => {
-      const btn = document.createElement('button');
-      btn.classList.add('emoji-btn');
-      btn.textContent = emoji;
-      btn.addEventListener('click', () => {
-        if (selectedEmojis.includes(emoji)) {
-          selectedEmojis = selectedEmojis.filter(e => e !== emoji);
-          btn.classList.remove('selected');
-        } else {
-          if (selectedEmojis.length >= 3) return;
-          selectedEmojis.push(emoji);
-          btn.classList.add('selected');
-        }
-      });
-      emojiOptionsEl.appendChild(btn);
-    });
-
-    document.getElementById('emoji-submit').addEventListener('click', async () => {
-      if (!currentVideoId || selectedEmojis.length === 0) return;
-      for (const emoji of selectedEmojis) {
-        await addDoc(collection(db, 'emojis'), { videoId: currentVideoId, emoji });
-      }
-      selectedEmojis = [];
-      document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
-      renderEmojiBackground(currentVideoId);
-    });
-
-    // ---- VIDEO GRID ----
-    const grid = document.getElementById('video-grid');
-    videos.forEach(video => {
-      const card = document.createElement('div');
-      card.classList.add('video-card');
-      card.innerHTML = `
-        <div class="video-thumb">
-          <iframe src="https://www.youtube.com/embed/${video.embedId || video.id}"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen></iframe>
-        </div>
-        <div class="video-card-title">${video.title}</div>
-      `;
-      card.addEventListener('click', () => openLightbox(video));
-      grid.appendChild(card);
-    });
-
-    // ---- LIGHTBOX ----
-    function openLightbox(video) {
-      currentVideoId = video.id;
-      document.getElementById('lightbox-iframe').src =
-        `https://www.youtube.com/embed/${video.embedId || video.id}?autoplay=1`;
-      document.getElementById('lightbox-title').textContent = video.title;
-      selectedEmojis = [];
-      document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
-      renderComments(video.id, 'lightbox-comments-list');
-      renderEmojiBackground(video.id);
-      document.getElementById('lightbox').classList.add('active');
-      document.getElementById('lightbox-submit-btn').onclick = () =>
-        submitComment(video.id, 'lightbox-textarea', 'lightbox-comments-list');
-    }
-
-    function closeLightbox() {
-      document.getElementById('lightbox-iframe').src = '';
-      document.getElementById('lightbox').classList.remove('active');
-    }
-
-    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
-    document.getElementById('lightbox').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('lightbox')) closeLightbox();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeLightbox();
-    });
-  </script>
+  </section>
 
 </body>
 </html>

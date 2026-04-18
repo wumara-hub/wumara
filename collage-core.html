@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wumara — Collage Core</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #f2ebe0;
+      font-family: 'Inter', sans-serif;
+      color: #2a1f14;
+      min-height: 100vh;
+    }
+
+    /* ---- HEADER ---- */
+    header {
+      padding: 40px 60px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid rgba(42,31,20,0.08);
+    }
+
+    .back-btn {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #b07040;
+      text-decoration: none;
+      border-bottom: 1px solid #b07040;
+      padding-bottom: 2px;
+      transition: opacity 0.2s;
+    }
+
+    .back-btn:hover { opacity: 0.6; }
+
+    .site-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #b07040;
+      text-decoration: none;
+    }
+
+    /* ---- INTRO ---- */
+    .intro {
+      padding: 80px 60px 60px;
+      max-width: 700px;
+    }
+
+    .series-tag {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #b07040;
+      border: 1px solid rgba(176, 112, 64, 0.3);
+      border-radius: 50px;
+      padding: 6px 16px;
+      margin-bottom: 24px;
+    }
+
+    .intro-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(42px, 6vw, 72px);
+      font-weight: 400;
+      color: #2a1f14;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .intro-desc {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-style: italic;
+      color: #8a6040;
+      line-height: 1.7;
+    }
+
+    /* ---- VIDEO GRID ---- */
+    .video-grid-section {
+      padding: 20px 60px 80px;
+    }
+
+    .grid-label {
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(42,31,20,0.3);
+      margin-bottom: 30px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(42,31,20,0.08);
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 24px;
+    }
+
+    .video-card {
+      text-decoration: none;
+      color: #2a1f14;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      display: block;
+    }
+
+    .video-card:hover { transform: translateY(-4px); }
+
+    .video-thumb {
+      aspect-ratio: 9/16;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #e0d0b8;
+      margin-bottom: 12px;
+      position: relative;
+      box-shadow: 0 6px 20px rgba(42,31,20,0.12);
+    }
+
+    .video-thumb iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      pointer-events: none;
+    }
+
+    /* Play overlay */
+    .video-thumb::after {
+      content: '▶';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: rgba(255,255,255,0);
+      background: rgba(42,31,20,0);
+      transition: all 0.3s;
+      border-radius: 10px;
+    }
+
+    .video-card:hover .video-thumb::after {
+      color: rgba(255,255,255,0.9);
+      background: rgba(42,31,20,0.4);
+    }
+
+    .video-card-number {
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(42,31,20,0.3);
+      margin-bottom: 4px;
+    }
+
+    .video-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      font-style: italic;
+      color: #2a1f14;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="videos.html" class="back-btn">← Videos</a>
+    <a href="index.html" class="site-name">Wumara</a>
+  </header>
+
+  <div class="intro">
+    <div class="series-tag">Series 001</div>
+    <h1 class="intro-title">Collage Core</h1>
+    <p class="intro-desc">Videos that just seem to go together — connected by music that makes the pictures dance.</p>
+  </div>
+
+  <div class="video-grid-section">
+    <div class="grid-label">17 videos</div>
+    <div class="video-grid" id="video-grid"></div>
+  </div>
+
+  <script>
+    const videos = [
+      { id: 'kzu3NrZs_dU', title: 'Are you a stranger to yourself?' },
+      { id: '3-Vm-rl66Gc',  title: "You're unstoppable." },
+      { id: 'ECmdzctjk30',  title: "I'm yearning again." },
+      { id: 'pgIkfnsuVUA',  title: 'The needle in a haystack.' },
+      { id: 'yhVTRHNiJjA',  title: "You're a star." },
+      { id: 'EPlJ-cPoRrY',  title: "You're sitting on it." },
+      { id: 'GaS_a_5bkIQ',  title: 'A jungle of noise.' },
+      { id: '9mILRCfAWnc',  title: "It's all crazy." },
+      { id: 'QvVyDmRLcLA',  title: 'This moment is all we have. Will u use it?' },
+      { id: 'xPo0-cCbHHk',  title: 'Still becoming at seventy-eight.' },
+      { id: 'lzTriEtDxdw',  title: "I don't like the word normal." },
+      { id: 'x1yNNcatCYI',  title: "Who's in the driver's seat?", embedId: '-1yNNcatCYI' },
+      { id: 'NZmDfBxCK2s',  title: 'This moment is all we have. Will u use it?' },
+      { id: 'vWMCiN1tqZs',  title: 'See you next time!' },
+      { id: 'D2gtlCWcm0E',  title: 'True rebellion.' },
+      { id: 'VkKlqrxUaWw',  title: 'I think we did.' },
+      { id: 'YzupWKmuVtA',  title: 'Improvise, adapt and overcome.' },
+    ];
+
+    const grid = document.getElementById('video-grid');
+
+    videos.forEach((video, i) => {
+      const embedId = video.embedId || video.id;
+      const card = document.createElement('a');
+      card.classList.add('video-card');
+      card.href = `video.html?id=${video.id}&embedId=${embedId}&title=${encodeURIComponent(video.title)}`;
+      card.innerHTML = `
+        <div class="video-thumb">
+          <iframe src="https://www.youtube.com/embed/${embedId}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        </div>
+        <div class="video-card-number">${String(i + 1).padStart(2, '0')}</div>
+        <div class="video-card-title">${video.title}</div>
+      `;
+      grid.appendChild(card);
+    });
+  </script>
+
+</body>
+</html>

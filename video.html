@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wumara — Video</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #f2ebe0;
+      font-family: 'Inter', sans-serif;
+      color: #2a1f14;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ---- FLOATING EMOJI BACKGROUND ---- */
+    #emoji-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .floating-emoji {
+      position: absolute;
+      opacity: 0.07;
+      animation: float-drift linear infinite;
+      user-select: none;
+    }
+
+    @keyframes float-drift {
+      0%   { transform: translateY(100vh) rotate(0deg); }
+      100% { transform: translateY(-20vh) rotate(20deg); }
+    }
+
+    /* ---- HEADER ---- */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 40px 60px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid rgba(42,31,20,0.08);
+    }
+
+    .back-btn {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #b07040;
+      text-decoration: none;
+      border-bottom: 1px solid #b07040;
+      padding-bottom: 2px;
+      transition: opacity 0.2s;
+    }
+
+    .back-btn:hover { opacity: 0.6; }
+
+    .site-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #b07040;
+      text-decoration: none;
+    }
+
+    /* ---- MAIN CONTENT ---- */
+    .main {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 40px 100px;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    /* ---- VIDEO ---- */
+    .video-wrap {
+      position: sticky;
+      top: 40px;
+    }
+
+    .video-frame {
+      width: 100%;
+      aspect-ratio: 9/16;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #e0d0b8;
+      box-shadow: 0 20px 60px rgba(42,31,20,0.2);
+    }
+
+    .video-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ---- INFO ---- */
+    .video-info {
+      padding-top: 8px;
+    }
+
+    .video-series {
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #b07040;
+      margin-bottom: 12px;
+    }
+
+    .video-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(24px, 3vw, 38px);
+      font-weight: 400;
+      font-style: italic;
+      color: #2a1f14;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .video-divider {
+      width: 40px;
+      height: 1px;
+      background: #b07040;
+      margin-bottom: 32px;
+    }
+
+    /* ---- EMOJI PICKER ---- */
+    .emoji-picker-section { margin-bottom: 36px; }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(42,31,20,0.35);
+      margin-bottom: 10px;
+    }
+
+    .emoji-picker-prompt {
+      font-size: 13px;
+      color: rgba(42,31,20,0.4);
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+
+    .emoji-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .emoji-btn {
+      background: rgba(42,31,20,0.05);
+      border: 1px solid rgba(42,31,20,0.1);
+      border-radius: 6px;
+      font-size: 18px;
+      padding: 5px 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+
+    .emoji-btn:hover { border-color: #b07040; transform: scale(1.1); }
+    .emoji-btn.selected { border-color: #b07040; background: rgba(176,112,64,0.1); }
+
+    .emoji-submit {
+      background: transparent;
+      border: 1px solid rgba(42,31,20,0.2);
+      border-radius: 4px;
+      color: rgba(42,31,20,0.4);
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .emoji-submit:hover { border-color: #b07040; color: #2a1f14; }
+
+    /* ---- COMMENTS ---- */
+    .comments-section { }
+
+    .comment-prompt {
+      font-size: 14px;
+      color: rgba(42,31,20,0.4);
+      margin-bottom: 14px;
+      font-style: italic;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .comment-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .comment-form textarea {
+      background: rgba(42,31,20,0.04);
+      border: 1px solid rgba(42,31,20,0.1);
+      border-radius: 6px;
+      color: #2a1f14;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      padding: 12px 16px;
+      resize: none;
+      height: 80px;
+      transition: border-color 0.2s;
+    }
+
+    .comment-form textarea:focus {
+      outline: none;
+      border-color: #b07040;
+    }
+
+    .comment-form textarea::placeholder { color: rgba(42,31,20,0.2); }
+
+    .comment-submit {
+      align-self: flex-start;
+      background: transparent;
+      border: 1px solid rgba(42,31,20,0.2);
+      border-radius: 4px;
+      color: rgba(42,31,20,0.4);
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .comment-submit:hover { border-color: #b07040; color: #2a1f14; }
+
+    .comments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .comment {
+      background: rgba(42,31,20,0.04);
+      border-radius: 6px;
+      padding: 14px 16px;
+      border-left: 2px solid rgba(176,112,64,0.3);
+    }
+
+    .comment-text { font-size: 14px; color: #4a3828; line-height: 1.6; margin-bottom: 8px; }
+    .comment-meta { font-size: 10px; color: rgba(42,31,20,0.3); letter-spacing: 1px; }
+  </style>
+</head>
+<body>
+
+  <div id="emoji-bg"></div>
+
+  <header>
+    <a href="collage-core.html" class="back-btn">← Collage Core</a>
+    <a href="index.html" class="site-name">Wumara</a>
+  </header>
+
+  <div class="main">
+    <!-- VIDEO -->
+    <div class="video-wrap">
+      <div class="video-frame">
+        <iframe id="video-iframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="video-info">
+      <div class="video-series">Collage Core · Series 001</div>
+      <div class="video-title" id="video-title"></div>
+      <div class="video-divider"></div>
+
+      <!-- Emoji Picker -->
+      <div class="emoji-picker-section">
+        <div class="section-label">React</div>
+        <div class="emoji-picker-prompt">Pick up to 3 — they float here forever</div>
+        <div class="emoji-options" id="emoji-options"></div>
+        <button class="emoji-submit" id="emoji-submit">Add to background</button>
+      </div>
+
+      <!-- Comments -->
+      <div class="comments-section">
+        <div class="section-label">Reflections</div>
+        <div class="comment-prompt">How did this make you feel? Any advice to share?</div>
+        <div class="comment-form">
+          <textarea placeholder="Share anonymously..." id="comment-textarea"></textarea>
+          <button class="comment-submit" id="comment-submit">Share</button>
+        </div>
+        <div class="comments-list" id="comments-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getFirestore, collection, addDoc, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBbrSJGdpxVX10GB3C-D4VLGuTc9_UDNTw",
+      authDomain: "my-portfolio-8a3b0.firebaseapp.com",
+      projectId: "my-portfolio-8a3b0",
+      storageBucket: "my-portfolio-8a3b0.firebasestorage.app",
+      messagingSenderId: "699379805284",
+      appId: "1:699379805284:web:8d07df74db82689f798371",
+      measurementId: "G-FF8PD50678"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Get video info from URL params
+    const params = new URLSearchParams(window.location.search);
+    const videoId = params.get('id');
+    const embedId = params.get('embedId') || videoId;
+    const title = params.get('title') || '';
+
+    // Set video
+    document.getElementById('video-iframe').src = `https://www.youtube.com/embed/${embedId}`;
+    document.getElementById('video-title').textContent = title;
+    document.title = `Wumara — ${title}`;
+
+    // ---- EMOJIS ----
+    const emojiList = ['🌊','🔥','💭','🌙','✨','🫀','🌿','🎭','🌀','💫','🕊️','🫧','🌸','⚡','🪐','🎯','🌑','🦋'];
+    let selectedEmojis = [];
+
+    const emojiOptionsEl = document.getElementById('emoji-options');
+    emojiList.forEach(emoji => {
+      const btn = document.createElement('button');
+      btn.classList.add('emoji-btn');
+      btn.textContent = emoji;
+      btn.addEventListener('click', () => {
+        if (selectedEmojis.includes(emoji)) {
+          selectedEmojis = selectedEmojis.filter(e => e !== emoji);
+          btn.classList.remove('selected');
+        } else {
+          if (selectedEmojis.length >= 3) return;
+          selectedEmojis.push(emoji);
+          btn.classList.add('selected');
+        }
+      });
+      emojiOptionsEl.appendChild(btn);
+    });
+
+    async function loadEmojis() {
+      const q = query(collection(db, 'emojis'), where('videoId', '==', videoId));
+      const snap = await getDocs(q);
+      const emojis = [];
+      snap.forEach(doc => emojis.push(doc.data().emoji));
+      return [...new Set(emojis)];
+    }
+
+    async function renderEmojiBackground() {
+      const bg = document.getElementById('emoji-bg');
+      bg.innerHTML = '';
+      const emojis = await loadEmojis();
+      emojis.forEach(emoji => {
+        for (let j = 0; j < 6; j++) {
+          const el = document.createElement('div');
+          el.classList.add('floating-emoji');
+          el.textContent = emoji;
+          el.style.left = (10 + Math.random() * 80) + '%';
+          el.style.animationDuration = (15 + Math.random() * 20) + 's';
+          el.style.animationDelay = (-Math.random() * 20) + 's';
+          el.style.fontSize = (50 + Math.random() * 80) + 'px';
+          bg.appendChild(el);
+        }
+      });
+    }
+
+    document.getElementById('emoji-submit').addEventListener('click', async () => {
+      if (!selectedEmojis.length) return;
+      for (const emoji of selectedEmojis) {
+        await addDoc(collection(db, 'emojis'), { videoId, emoji });
+      }
+      selectedEmojis = [];
+      document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+      renderEmojiBackground();
+    });
+
+    // ---- COMMENTS ----
+    async function renderComments() {
+      const list = document.getElementById('comments-list');
+      list.innerHTML = '<div style="color:rgba(42,31,20,0.25);font-size:12px;font-style:italic;">Loading...</div>';
+      const q = query(collection(db, 'comments'), where('videoId', '==', videoId));
+      const snap = await getDocs(q);
+      const comments = [];
+      snap.forEach(doc => comments.push(doc.data()));
+      comments.sort((a, b) => b.createdAt - a.createdAt);
+      list.innerHTML = comments.length === 0
+        ? '<div style="color:rgba(42,31,20,0.25);font-size:13px;font-style:italic;">No reflections yet — be the first.</div>'
+        : comments.map(c => `
+            <div class="comment">
+              <div class="comment-text">${c.text}</div>
+              <div class="comment-meta">Anonymous · ${c.time}</div>
+            </div>
+          `).join('');
+    }
+
+    document.getElementById('comment-submit').addEventListener('click', async () => {
+      const textarea = document.getElementById('comment-textarea');
+      const text = textarea.value.trim();
+      if (!text) return;
+      textarea.value = '';
+      await addDoc(collection(db, 'comments'), {
+        videoId,
+        text,
+        time: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        createdAt: Date.now()
+      });
+      renderComments();
+    });
+
+    // Init
+    renderComments();
+    renderEmojiBackground();
+  </script>
+
+</body>
+</html>
