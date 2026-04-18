@@ -15,7 +15,6 @@
       min-height: 100vh;
     }
 
-    /* ---- HEADER ---- */
     header {
       padding: 40px 60px 20px;
       display: flex;
@@ -54,7 +53,113 @@
 
     .back-btn:hover { opacity: 0.6; }
 
-    /* ---- MASONRY GRID ---- */
+    /* ---- LAYOUT ---- */
+    .page-layout {
+      display: flex;
+      position: relative;
+    }
+
+    /* ---- FILTER PANEL ---- */
+    .filter-toggle {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #2c1810;
+      color: #f5f0e8;
+      border: none;
+      padding: 12px 8px;
+      cursor: pointer;
+      z-index: 100;
+      border-radius: 0 6px 6px 0;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      transition: background 0.2s;
+    }
+
+    .filter-toggle:hover { background: #8b6f47; }
+
+    .filter-panel {
+      position: fixed;
+      left: -280px;
+      top: 0;
+      width: 280px;
+      height: 100vh;
+      background: #2c1810;
+      z-index: 99;
+      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 100px 40px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    .filter-panel.open { left: 0; }
+
+    .filter-panel-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #8b6f47;
+      margin-bottom: 8px;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1px solid rgba(245, 240, 232, 0.15);
+      border-radius: 4px;
+      color: rgba(245, 240, 232, 0.5);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 10px 16px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      border-color: #8b6f47;
+      color: #f5f0e8;
+    }
+
+    .filter-btn.active {
+      background: #8b6f47;
+      border-color: #8b6f47;
+      color: #f5f0e8;
+    }
+
+    .filter-clear {
+      margin-top: 16px;
+      background: transparent;
+      border: none;
+      color: rgba(245, 240, 232, 0.3);
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-align: left;
+      padding: 0;
+      transition: color 0.2s;
+    }
+
+    .filter-clear:hover { color: #f5f0e8; }
+
+    /* ---- GALLERY ---- */
+    .gallery-wrap {
+      flex: 1;
+      transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gallery-wrap.shifted { margin-left: 280px; }
+
     .gallery {
       columns: 3;
       column-gap: 16px;
@@ -71,6 +176,8 @@
       overflow: hidden;
       border-radius: 4px;
       cursor: pointer;
+      transform-origin: center center;
+      transition: opacity 0.3s ease;
     }
 
     .photo-item img {
@@ -80,11 +187,8 @@
       border-radius: 4px;
     }
 
-    .photo-item:hover img {
-      transform: scale(1.04);
-    }
+    .photo-item:hover img { transform: scale(1.04); }
 
-    /* Subtle overlay on hover */
     .photo-item::after {
       content: '';
       position: absolute;
@@ -97,7 +201,6 @@
 
     .photo-item:hover::after { opacity: 1; }
 
-    /* View icon on hover */
     .photo-item .view-hint {
       position: absolute;
       bottom: 16px;
@@ -112,6 +215,30 @@
     }
 
     .photo-item:hover .view-hint { opacity: 1; }
+
+    /* Filtered out animation — paper folding away */
+    .photo-item.filtered-out {
+  animation: fold-away 0.6s ease-in forwards;
+  pointer-events: none;
+  position: absolute;
+  visibility: hidden;
+}
+
+    .photo-item.filtered-in {
+      animation: unfold-in 0.5s ease-out forwards;
+    }
+
+    @keyframes fold-away {
+      0%   { transform: scale(1) rotate(0deg); opacity: 1; }
+      40%  { transform: scale(0.6) rotate(-4deg); opacity: 0.6; }
+      100% { transform: scale(0) rotate(8deg); opacity: 0; height: 0; margin: 0; padding: 0; }
+    }
+
+    @keyframes unfold-in {
+      0%   { transform: scale(0) rotate(8deg); opacity: 0; }
+      60%  { transform: scale(1.05) rotate(-1deg); opacity: 0.8; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
 
     /* ---- LIGHTBOX ---- */
     #lightbox {
@@ -175,12 +302,30 @@
 <body>
 
   <header>
-    <a href="index.html" class="site-name">Wumara</a>
+    <a href="index.html" class="back-btn">← Universe</a>
     <h1 class="page-title">Photography</h1>
-    <a href="index.html" class="back-btn">← Back to Universe</a>
+    <a href="index.html" class="site-name">Wumara</a>
   </header>
 
-  <div class="gallery" id="gallery"></div>
+  <!-- Filter toggle tab -->
+  <button class="filter-toggle" id="filter-toggle">Filter</button>
+
+  <!-- Filter panel -->
+  <div class="filter-panel" id="filter-panel">
+    <div class="filter-panel-title">Browse by</div>
+    <button class="filter-btn" data-filter="city">City</button>
+    <button class="filter-btn" data-filter="nature">Nature</button>
+    <button class="filter-btn" data-filter="landscape">Landscape</button>
+    <button class="filter-btn" data-filter="subject">Subject</button>
+    <button class="filter-btn" data-filter="midground">Midground</button>
+    <button class="filter-clear" id="filter-clear">✕ Clear filters</button>
+  </div>
+
+  <div class="page-layout">
+    <div class="gallery-wrap" id="gallery-wrap">
+      <div class="gallery" id="gallery"></div>
+    </div>
+  </div>
 
   <!-- Lightbox -->
   <div id="lightbox">
@@ -193,32 +338,95 @@
   </div>
 
   <script>
-    // ---- PHOTO DATA ----
-    // To add a new photo: add a new object to this array!
     const photos = [
-      { src: './photos/photo1.JPG', title: 'Moss',   desc: 'Castle Rock State Park, CA' },
-      { src: './photos/photo2.JPG', title: 'Oak',  desc: 'this oak tree is in black and white lol' },
-      { src: './photos/photo3.JPG', title: 'San Francisco Commuters', desc: 'by car or by boat, we will get there' },
-      { src: './photos/photo4.JPG', title: "37.8154'N x 122.3714'W",  desc: 'this feels so 2012' },
-      { src: './photos/photo5.JPG', title: "Richard's Photo Op",  desc: 'what if I pushed him lol' },
-      { src: './photos/photo6.JPG', title: 'Beach Day on Mars',  desc: "next spring break we're going to earth" },
-      { src: './photos/photo7.JPG', title: 'Backcountry', desc: "just cause the livins slow don't mean we're missing out" },
-      { src: './photos/photo8.JPG', title: 'Bay Goals',desc: 'some day we will get there' },
+      { src: './photos/photo1.JPG', title: 'Moss', desc: 'Castle Rock State Park, CA', tags: ['nature','landscape','subject'] },
+      { src: './photos/photo2.JPG', title: 'Oak', desc: 'this oak tree is in black and white lol', tags: ['nature','landscape','subject'] },
+      { src: './photos/photo3.JPG', title: 'San Francisco Commuters', desc: 'by car or by boat, we will get there', tags: ['city','landscape'] },
+      { src: './photos/photo4.JPG', title: "37.8154'N x 122.3714'W", desc: 'this feels so 2012', tags: ['foreground','subject','city'] },
+      { src: './photos/photo5.JPG', title: "Richard's Photo Op", desc: 'what if I pushed him lol', tags: ['nature','landscape','subject'] },
+      { src: './photos/photo6.JPG', title: 'Beach Day on Mars', desc: "next spring break we're going to earth", tags: ['nature','landscape','subject'] },
+      { src: './photos/photo7.JPG', title: 'Backcountry', desc: "just cause the livins slow don't mean we're missing out", tags: ['nature','landscape'] },
+      { src: './photos/photo8.JPG', title: 'Bay Goals', desc: 'some day we will get there', tags: ['nature','landscape','subject','city'] },
     ];
 
     // ---- BUILD GALLERY ----
     const gallery = document.getElementById('gallery');
+    const items = [];
 
-    photos.forEach((photo, i) => {
+    photos.forEach((photo) => {
       const item = document.createElement('div');
       item.classList.add('photo-item');
+      item.dataset.tags = photo.tags.join(',');
       item.innerHTML = `
         <img src="${photo.src}" alt="${photo.title}" loading="lazy">
         <span class="view-hint">View</span>
       `;
       item.addEventListener('click', () => openLightbox(photo));
       gallery.appendChild(item);
+      items.push(item);
     });
+
+    // ---- FILTER LOGIC ----
+    const filterPanel = document.getElementById('filter-panel');
+    const filterToggle = document.getElementById('filter-toggle');
+    const galleryWrap = document.getElementById('gallery-wrap');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const filterClear = document.getElementById('filter-clear');
+
+    let activeFilters = [];
+    let panelOpen = false;
+
+    filterToggle.addEventListener('click', () => {
+      panelOpen = !panelOpen;
+      filterPanel.classList.toggle('open', panelOpen);
+      galleryWrap.classList.toggle('shifted', panelOpen);
+    });
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+        if (activeFilters.includes(filter)) {
+          activeFilters = activeFilters.filter(f => f !== filter);
+          btn.classList.remove('active');
+        } else {
+          activeFilters.push(filter);
+          btn.classList.add('active');
+        }
+        applyFilters();
+      });
+    });
+
+    filterClear.addEventListener('click', () => {
+      activeFilters = [];
+      filterBtns.forEach(b => b.classList.remove('active'));
+      applyFilters();
+    });
+
+    function applyFilters() {
+  items.forEach(item => {
+    const tags = item.dataset.tags.split(',');
+    const matches = activeFilters.length === 0 ||
+      activeFilters.every(f => tags.includes(f));
+
+    item.classList.remove('filtered-out', 'filtered-in');
+    void item.offsetWidth;
+
+    if (matches) {
+      item.style.visibility = '';
+      item.style.position = '';
+      item.style.opacity = '1';
+      item.classList.add('filtered-in');
+    } else {
+      item.classList.add('filtered-out');
+      setTimeout(() => {
+        if (item.classList.contains('filtered-out')) {
+          item.style.visibility = 'hidden';
+          item.style.position = 'absolute';
+        }
+      }, 600);
+    }
+  });
+}
 
     // ---- LIGHTBOX ----
     const lightbox     = document.getElementById('lightbox');
@@ -228,7 +436,7 @@
     const lightboxClose= document.getElementById('lightbox-close');
 
     function openLightbox(photo) {
-      lightboxImg.src      = photo.src;
+      lightboxImg.src = photo.src;
       lightboxTitle.textContent = photo.title;
       lightboxDesc.textContent  = photo.desc;
       lightbox.classList.add('active');
@@ -242,7 +450,6 @@
     lightbox.addEventListener('click', (e) => {
       if (e.target === lightbox) closeLightbox();
     });
-
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeLightbox();
     });
