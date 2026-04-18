@@ -68,19 +68,31 @@
       background: #2c1810;
       color: #f5f0e8;
       border: none;
-      padding: 12px 8px;
+      padding: 18px 12px;
       cursor: pointer;
       z-index: 100;
       border-radius: 0 6px 6px 0;
       font-family: 'Inter', sans-serif;
-      font-size: 10px;
+      font-size: 15px;
       letter-spacing: 2px;
       text-transform: uppercase;
       writing-mode: vertical-rl;
-      transition: background 0.2s;
+      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s, box-shadow 0.2s;
     }
 
     .filter-toggle:hover { background: #8b6f47; }
+
+    .filter-toggle.open {
+      left: 280px;
+      background: #8b6f47;
+      box-shadow: 4px 0 20px rgba(139, 111, 71, 0.6);
+      animation: tab-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes tab-glow {
+      0%, 100% { box-shadow: 4px 0 20px rgba(139, 111, 71, 0.6); }
+      50%       { box-shadow: 4px 0 35px rgba(139, 111, 71, 1); }
+    }
 
     .filter-panel {
       position: fixed;
@@ -318,6 +330,7 @@
     <button class="filter-btn" data-filter="landscape">Landscape</button>
     <button class="filter-btn" data-filter="subject">Subject</button>
     <button class="filter-btn" data-filter="midground">Midground</button>
+    <button class="filter-btn" data-filter="foreground">Foreground</button>
     <button class="filter-clear" id="filter-clear">✕ Clear filters</button>
   </div>
 
@@ -380,6 +393,7 @@
       panelOpen = !panelOpen;
       filterPanel.classList.toggle('open', panelOpen);
       galleryWrap.classList.toggle('shifted', panelOpen);
+      filterToggle.classList.toggle('open', panelOpen);
     });
 
     filterBtns.forEach(btn => {
