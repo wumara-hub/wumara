@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="小辣">
+<title>小辣 Voice Tutor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Ma+Shan+Zheng&family=Noto+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a call screen. The vermilion seal is the tutor; it breathes while she talks.
+   Celadon paper, ink type, pinyin coloured by tone above every character. */
+:root{
+  --paper:#E3ECE5; --surface:#F5F9F5; --ink:#14201A; --muted:#55665C; --line:#BCCBC1;
+  --seal:#CF2E1B; --seal-ink:#FFFFFF; --ginger:#8A5F08; --good:#2A6E20;
+  --t1:#0A6A73; --t2:#2F7A22; --t3:#2452BD; --t4:#7A2FA0; --t0:#55665C;
+  --display:"Bricolage Grotesque","Noto Sans",system-ui,sans-serif;
+  --brush:"Ma Shan Zheng","Noto Sans SC","PingFang SC","Microsoft YaHei",serif;
+  --body:"Noto Sans","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --han:"Noto Sans SC","PingFang SC","Microsoft YaHei","Noto Sans",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#0E1713; --surface:#18251E; --ink:#DEE9E1; --muted:#8FA397; --line:#2B3C32;
+    --seal:#F0503A; --seal-ink:#1A0704; --ginger:#E2B24C; --good:#8FD67F;
+    --t1:#5FD0D9; --t2:#8FD67F; --t3:#8FB0FF; --t4:#D49CF2; --t0:#8FA397;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{height:100%;margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;
+  display:flex;flex-direction:column;overflow:hidden}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+.wrap{width:100%;max-width:760px;margin:0 auto;padding:0 16px}
+
+header{border-bottom:1px solid var(--line);padding:12px 0 10px}
+.top{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:10px;margin-right:auto}
+.brand h1{font-family:var(--brush);font-weight:400;font-size:44px;line-height:.9;margin:0}
+.brand p{margin:0;font-family:var(--display);font-weight:500;font-size:13px;color:var(--muted)}
+.home{font-family:var(--display);font-weight:500;font-size:14px;color:var(--muted);text-decoration:none;padding:7px 4px}
+.home:hover{color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--ink);border-radius:999px;overflow:hidden}
+.seg button{background:transparent;border:0;padding:7px 16px;font-family:var(--display);font-weight:700;font-size:14px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.seg button:disabled{opacity:.5;cursor:default}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend svg{width:22px;height:14px}
+.legend b{font-weight:600}
+.t1{color:var(--t1)}.t2{color:var(--t2)}.t3{color:var(--t3)}.t4{color:var(--t4)}.t0{color:var(--t0)}
+
+/* call stage */
+.stage{display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.seal{flex:none;width:72px;height:72px;background:var(--seal);color:var(--seal-ink);font-family:var(--brush);
+  font-size:50px;line-height:72px;text-align:center;border-radius:8px;transform:rotate(-4deg);
+  box-shadow:inset 0 0 0 3px var(--seal),inset 0 0 0 5px color-mix(in srgb,var(--seal-ink) 55%,transparent)}
+.seal.speaking{animation:breathe 1s ease-in-out infinite}
+.seal.hearing{box-shadow:inset 0 0 0 3px var(--seal),inset 0 0 0 5px color-mix(in srgb,var(--seal-ink) 55%,transparent),0 0 0 6px color-mix(in srgb,var(--good) 45%,transparent)}
+@keyframes breathe{0%,100%{transform:rotate(-4deg) scale(1)}50%{transform:rotate(-4deg) scale(1.08)}}
+.state{flex:1;min-width:180px}
+.state .now{font-family:var(--display);font-weight:700;font-size:20px;text-wrap:balance}
+.state .sub{font-size:13.5px;color:var(--muted)}
+.state .sub.err{color:var(--seal);font-weight:500}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.primary{background:var(--seal);color:var(--seal-ink);border:0;border-radius:999px;padding:13px 24px;font-family:var(--display);font-weight:700;font-size:17px}
+.primary.end{background:var(--ink);color:var(--paper)}
+.ghost{background:transparent;border:1px solid var(--line);border-radius:999px;padding:12px 18px;font-size:15px}
+.ghost[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.primary:disabled{opacity:.5;cursor:default}
+
+.gate{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--line)}
+.gate label{font-size:14px;color:var(--muted);flex-basis:100%}
+.gate input{flex:1;min-width:160px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px;font-size:17px}
+
+main{flex:1;min-height:0;overflow-y:auto;padding:16px 0 20px}
+#log{display:flex;flex-direction:column;gap:14px}
+.hint{color:var(--muted);font-size:15px;max-width:60ch}
+.hint li{margin:4px 0}
+.msg{max-width:90%;border-radius:4px 14px 14px 14px;padding:10px 14px;background:var(--surface);border:1px solid var(--line);font-size:17px}
+.msg.me{align-self:flex-end;background:var(--ink);color:var(--paper);border-color:var(--ink);border-radius:14px 4px 14px 14px}
+.msg .who{font-family:var(--display);font-size:11px;text-transform:uppercase;letter-spacing:.07em;opacity:.7;margin-bottom:2px}
+.msg ruby{font-family:var(--han);font-size:24px;font-weight:500;ruby-position:over;margin:0 1px}
+.msg rt{font-family:var(--body);font-size:13px;font-weight:600}
+.msg.me rt{filter:brightness(1.5) saturate(.8)}
+#book{display:none;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+#book.on{display:block}
+#book h2{font-family:var(--display);font-size:15px;margin:0 0 8px}
+#bookGrid{display:flex;gap:8px;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.card ruby{font-family:var(--han);font-size:22px;font-weight:500}
+.card rt{font-size:12.5px;font-weight:600}
+.card .en{font-size:13.5px;color:var(--muted)}
+.small{background:transparent;border:1px solid var(--line);border-radius:6px;padding:4px 10px;font-size:13px;color:var(--muted);margin-top:10px}
+@media (max-width:480px){
+  .brand h1{font-size:36px}
+  .seal{width:60px;height:60px;line-height:60px;font-size:42px}
+  .msg{max-width:100%}
+}
+@media (prefers-reduced-motion: reduce){ .seal.speaking{animation:none} }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <h1 lang="zh-Hans">小辣</h1>
+        <p>Your Mandarin tutor, Shanghai style. She hears you.</p>
+      </div>
+      <a class="home" href="/">&larr; Wumara</a>
+      <div class="seg" role="group" aria-label="Mode">
+        <button type="button" id="mLearn" aria-pressed="true">Learn</button>
+        <button type="button" id="mSpar" aria-pressed="false">Spar</button>
+      </div>
+    </div>
+    <div class="legend" aria-label="Tone colours">
+      <span class="t1"><svg viewBox="0 0 22 14"><path d="M2 3H20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><b>mā</b> 1 high, flat</span>
+      <span class="t2"><svg viewBox="0 0 22 14"><path d="M2 11L20 2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><b>má</b> 2 rising</span>
+      <span class="t3"><svg viewBox="0 0 22 14"><path d="M2 5L9 12L20 3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><b>mǎ</b> 3 dipping</span>
+      <span class="t4"><svg viewBox="0 0 22 14"><path d="M2 2L20 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><b>mà</b> 4 falling</span>
+      <span class="t0"><b>ma</b> neutral</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <form class="gate" id="gate" hidden autocomplete="off">
+    <label for="pass">Enter the passcode you set as APP_PASSCODE. This device will remember it.</label>
+    <input id="pass" type="password" autocomplete="current-password">
+    <button class="ghost" type="submit">Save</button>
+  </form>
+  <div class="stage">
+    <div class="seal" id="seal" lang="zh-Hans" aria-hidden="true">辣</div>
+    <div class="state">
+      <div class="now" id="now">Ready when you are</div>
+      <div class="sub" id="sub">Tap Start, allow the microphone, and just talk. Headphones give the cleanest result.</div>
+    </div>
+    <div class="btns">
+      <button class="primary" id="go" type="button">Start lesson</button>
+      <button class="ghost" id="mute" type="button" aria-pressed="false" hidden>Mute me</button>
+      <button class="ghost" id="bookBtn" type="button" aria-pressed="false">My phrases (0)</button>
+    </div>
+  </div>
+</div>
+
+<main id="scroll"><div class="wrap">
+  <section id="book" aria-label="Phrases you have learned">
+    <h2>Phrases you know</h2>
+    <div id="bookGrid"></div>
+    <button class="small" id="wipe" type="button">Erase my progress on this device</button>
+  </section>
+  <div id="log" aria-live="polite">
+    <div class="hint" id="hint">
+      How a lesson goes:
+      <ul>
+        <li>小辣 greets you out loud and asks you to say a phrase.</li>
+        <li>You say it. She listens to your actual voice and tells you which syllable or tone to fix.</li>
+        <li>Everything spoken appears here, with pinyin above each character.</li>
+        <li>Ask her anything in English at any point, or interrupt her mid-sentence.</li>
+      </ul>
+    </div>
+  </div>
+</div></main>
+
+<audio id="voice" autoplay playsinline></audio>
+
+<script src="/xiaola/pinyin-pro.js"></script>
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
+var MAX_MIN=30;
+
+/* ---------- stored state (this device only) ---------- */
+function load(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v;}catch(e){return d;}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+var mode=load("xiaola.mode","learn")==="spar"?"spar":"learn";
+var learned=load("xiaola.learned",[]); if(!Array.isArray(learned)) learned=[];
+var pass=load("xiaola.pass","");
+
+/* ---------- pinyin above characters, coloured by tone ---------- */
+function toneOf(s){
+  if(/[āēīōūǖ]/.test(s))return 1; if(/[áéíóúǘ]/.test(s))return 2;
+  if(/[ǎěǐǒǔǚ]/.test(s))return 3; if(/[àèìòùǜ]/.test(s))return 4; return 0;
+}
+var HAN_RUN=/(\p{Script=Han}+)/u, IS_HAN=/^\p{Script=Han}+$/u;
+function rich(node,text){
+  node.textContent="";
+  String(text||"").split(HAN_RUN).forEach(function(part){
+    if(!part) return;
+    if(!IS_HAN.test(part)){ node.appendChild(document.createTextNode(part)); return; }
+    var chars=Array.from(part), py=[];
+    try{ py=window.pinyinPro.pinyin(part,{type:"array"}); }catch(e){}
+    chars.forEach(function(ch,i){
+      var r=el("ruby",null,ch); r.lang="zh-Hans";
+      if(py[i]){ r.appendChild(el("rt","t"+toneOf(py[i]),py[i])); }
+      node.appendChild(r);
+    });
+  });
+}
+
+/* ---------- phrase book ---------- */
+var wipeArmed=false;
+function renderBook(){
+  $("bookBtn").textContent="My phrases ("+learned.length+")";
+  var g=$("bookGrid"); g.textContent="";
+  if(!learned.length) g.appendChild(el("div","hint","Nothing yet. Each phrase you get right is saved here, and 小辣 picks up from it next time."));
+  learned.forEach(function(l){
+    var c=el("div","card"), h=el("div"); rich(h,l.hanzi); c.appendChild(h); c.appendChild(el("div","en",l.english)); g.appendChild(c);
+  });
+  $("wipe").hidden=!learned.length; $("wipe").textContent="Erase my progress on this device"; wipeArmed=false;
+}
+function addLearned(a){
+  var h=String((a&&a.hanzi)||"").trim(); if(!h) return;
+  if(learned.some(function(l){return l.hanzi===h;})) return;
+  learned.push({hanzi:h,english:String((a&&a.english)||"")});
+  if(learned.length>400) learned=learned.slice(-400);
+  save("xiaola.learned",learned); renderBook();
+}
+
+/* ---------- transcript ---------- */
+var log=$("log"), scroller=$("scroll"), bubbles={};
+function bottom(){ scroller.scrollTop=scroller.scrollHeight; }
+function bubble(id,who){
+  if(bubbles[id]) return bubbles[id];
+  if($("hint")) $("hint").remove();
+  var b=el("div","msg"+(who==="me"?" me":""));
+  b.appendChild(el("div","who",who==="me"?"You (as transcribed)":"小辣"));
+  var body=el("div","body",who==="me"?"…":""); b.appendChild(body);
+  log.appendChild(b); bubbles[id]={row:b,body:body,text:""}; bottom(); return bubbles[id];
+}
+
+/* ---------- status ---------- */
+function status(now,sub,err){ $("now").textContent=now; var s=$("sub"); s.textContent=sub||""; s.className="sub"+(err?" err":""); }
+function sealState(c){ $("seal").className="seal"+(c?" "+c:""); }
+
+/* ---------- the call ---------- */
+var pc=null, dc=null, stream=null, live=false, timer=null, startedAt=0, muted=false;
+function send(o){ if(dc&&dc.readyState==="open") dc.send(JSON.stringify(o)); }
+function setLive(on){
+  live=on;
+  var go=$("go"); go.disabled=false; go.textContent=on?"End lesson":(mode==="spar"?"Start sparring":"Start lesson"); go.classList.toggle("end",on);
+  $("mute").hidden=!on; $("mLearn").disabled=on; $("mSpar").disabled=on;
+  if(!on){ muted=false; $("mute").setAttribute("aria-pressed","false"); $("mute").textContent="Mute me"; sealState(""); }
+}
+function stop(now,sub,err){
+  if(timer){ clearInterval(timer); timer=null; }
+  try{ if(dc) dc.close(); }catch(e){}
+  try{ if(pc) pc.close(); }catch(e){}
+  try{ if(stream) stream.getTracks().forEach(function(t){t.stop();}); }catch(e){}
+  pc=dc=stream=null; $("voice").srcObject=null;
+  setLive(false);
+  status(now||"Lesson ended", sub||"Tap Start whenever you want to pick it up again.", err);
+}
+function onEvent(ev){
+  var t=ev.type||"";
+  if(t==="input_audio_buffer.speech_started"){ sealState("hearing"); status("Listening to you…",""); if(ev.item_id) bubble(ev.item_id,"me"); }
+  else if(t==="input_audio_buffer.speech_stopped"){ sealState(""); status("Thinking…",""); }
+  else if(t==="conversation.item.input_audio_transcription.completed"){
+    var u=bubble(ev.item_id,"me"), txt=String(ev.transcript||"").trim();
+    if(!txt){ u.row.remove(); delete bubbles[ev.item_id]; } else { rich(u.body,txt); bottom(); }
+  }
+  else if(t==="conversation.item.input_audio_transcription.failed"){
+    if(bubbles[ev.item_id]){ bubbles[ev.item_id].body.textContent="(couldn't transcribe that, but 小辣 still heard it)"; }
+  }
+  else if(t==="response.output_audio_transcript.delta"||t==="response.audio_transcript.delta"){
+    var b=bubble(ev.item_id||ev.response_id||"x","her"); b.text+=ev.delta||""; rich(b.body,b.text); bottom();
+  }
+  else if(t==="response.output_audio_transcript.done"||t==="response.audio_transcript.done"){
+    var d=bubble(ev.item_id||ev.response_id||"x","her"); if(ev.transcript){ d.text=ev.transcript; rich(d.body,d.text); bottom(); }
+  }
+  else if(t==="output_audio_buffer.started"){ sealState("speaking"); status("小辣 is talking","Jump in whenever you like."); }
+  else if(t==="output_audio_buffer.stopped"||t==="output_audio_buffer.cleared"){ sealState(""); status(muted?"You're muted":"Your turn", muted?"Tap Unmute to answer.":"Say it out loud."); }
+  else if(t==="response.done"){
+    var out=(ev.response&&ev.response.output)||[], called=false, spoke=false;
+    out.forEach(function(item){
+      if(item.type==="message") spoke=true;
+      if(item.type==="function_call"){
+        called=true;
+        if(item.name==="mark_learned"){ try{ addLearned(JSON.parse(item.arguments||"{}")); }catch(e){} }
+        send({type:"conversation.item.create",item:{type:"function_call_output",call_id:item.call_id,output:"saved"}});
+      }
+    });
+    if(called&&!spoke) send({type:"response.create"});   // she only called the tool; let her carry on talking
+    if(ev.response&&ev.response.status==="failed"){
+      var m=ev.response.status_details&&ev.response.status_details.error&&ev.response.status_details.error.message;
+      status("小辣 hit a problem", m||"Her reply failed. Say something to try again.", true);
+    }
+  }
+  else if(t==="error"){ status("Something went wrong",(ev.error&&ev.error.message)||"Unknown error from the voice service.",true); }
+}
+async function start(){
+  if(!navigator.mediaDevices||!window.RTCPeerConnection){ status("This browser can't run a voice lesson","Open the site in Chrome, Safari or Edge over https.",true); return; }
+  if(!pass){ $("gate").hidden=false; $("pass").focus(); status("One-time setup","Enter your passcode above, then tap Start.",false); return; }
+  $("go").disabled=true; status("Connecting…","Allow the microphone if your browser asks.");
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+  }catch(e){ $("go").disabled=false; status("Microphone blocked","Allow microphone access for this site in your browser settings, then tap Start again.",true); return; }
+  try{
+    var r=await fetch("/api/session",{method:"POST",headers:{"Content-Type":"application/json","x-passcode":pass},body:JSON.stringify({mode:mode,learned:learned})});
+    var data=await r.json().catch(function(){return {};});
+    if(r.status===401){ pass=""; save("xiaola.pass",""); $("gate").hidden=false; stop("Wrong passcode","Enter the passcode again, then tap Start.",true); return; }
+    if(!r.ok||!data.value){ stop("Couldn't start the lesson",data.error||("The server answered "+r.status+"."),true); return; }
+
+    pc=new RTCPeerConnection();
+    pc.ontrack=function(e){ var a=$("voice"); a.srcObject=e.streams[0]; var p=a.play(); if(p&&p.catch) p.catch(function(){}); };
+    pc.addTrack(stream.getAudioTracks()[0],stream);
+    pc.onconnectionstatechange=function(){
+      if(!pc) return;
+      if(pc.connectionState==="failed"||pc.connectionState==="disconnected"){ stop("Connection dropped","Check your internet, then tap Start to continue where you left off.",true); }
+    };
+    dc=pc.createDataChannel("oai-events");
+    dc.onmessage=function(m){ var ev; try{ ev=JSON.parse(m.data); }catch(e){ return; } onEvent(ev); };
+    dc.onopen=function(){ send({type:"response.create"}); };   // she speaks first
+
+    var offer=await pc.createOffer(); await pc.setLocalDescription(offer);
+    var ans=await fetch("https://api.openai.com/v1/realtime/calls",{method:"POST",body:offer.sdp,headers:{Authorization:"Bearer "+data.value,"Content-Type":"application/sdp"}});
+    if(!ans.ok){ var why=await ans.text().catch(function(){return "";}); stop("Couldn't connect to the voice service",(why||("HTTP "+ans.status)).slice(0,300),true); return; }
+    await pc.setRemoteDescription({type:"answer",sdp:await ans.text()});
+
+    bubbles={}; setLive(true); startedAt=Date.now(); status("Connected","小辣 is about to say hello.");
+    timer=setInterval(function(){
+      if((Date.now()-startedAt)/60000>=MAX_MIN) stop("That's "+MAX_MIN+" minutes","Sessions end automatically so a forgotten tab can't run up a bill. Tap Start for another round.");
+    },5000);
+  }catch(e){ stop("Couldn't start the lesson",(e&&e.message)||"Network error.",true); }
+}
+
+/* ---------- controls ---------- */
+function applyMode(){
+  $("mLearn").setAttribute("aria-pressed",String(mode==="learn")); $("mSpar").setAttribute("aria-pressed",String(mode==="spar"));
+  if(!live) $("go").textContent=mode==="spar"?"Start sparring":"Start lesson";
+}
+$("mLearn").onclick=function(){ if(live) return; mode="learn"; save("xiaola.mode",mode); applyMode(); };
+$("mSpar").onclick=function(){ if(live) return; mode="spar"; save("xiaola.mode",mode); applyMode(); };
+$("go").onclick=function(){ if(live) stop(); else start(); };
+$("mute").onclick=function(){
+  muted=!muted; if(stream) stream.getAudioTracks().forEach(function(t){ t.enabled=!muted; });
+  this.setAttribute("aria-pressed",String(muted)); this.textContent=muted?"Unmute":"Mute me";
+  if(muted) status("You're muted","小辣 can't hear you until you unmute.");
+};
+$("gate").addEventListener("submit",function(e){
+  e.preventDefault(); var v=$("pass").value.trim(); if(!v) return;
+  pass=v; save("xiaola.pass",pass); $("pass").value=""; $("gate").hidden=true; status("Passcode saved","Tap Start.");
+});
+$("bookBtn").onclick=function(){ var on=$("book").classList.toggle("on"); this.setAttribute("aria-pressed",String(on)); if(on) scroller.scrollTop=0; };
+$("wipe").onclick=function(){
+  if(!wipeArmed){ wipeArmed=true; this.textContent="Tap again to erase every phrase"; return; }
+  learned=[]; save("xiaola.learned",learned); renderBook();
+};
+window.addEventListener("pagehide",function(){ if(live) stop(); });
+applyMode(); renderBook();
+})();
+</script>
+</body>
+</html>
