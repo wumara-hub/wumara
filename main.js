@@ -171,14 +171,13 @@ saturn.mesh.add(ring);
 // Neptune - Projects
 const neptune = makePlanet('./textures/planet3.jpg', 10, 230, 0.001,  0, 0x4466ff);
 
-// Xiaola - Mandarin voice tutor (reuses the planet2 texture with a jade tint)
-const xiaola  = makePlanet('./textures/planet2.jpg', 7,  115, 0.0024, 0, 0x44ddaa);
-xiaola.mesh.material.color.set(0x9fe8c8);
+// Venus - 小辣 Mandarin voice tutor (innermost orbit, as in the real solar system)
+const xiaola  = makePlanet('./textures/planet4.jpg', 7,  60, 0.0042, 0, 0xffc266);
 xiaola.pivot.rotation.y = 2; // start away from the other planets
 
 const planets = [
+  { ...xiaola,  name: '小辣 · Mandarin', page: 'xiaola/index.html', color: '#f0c27a' },
   { ...mars,    name: 'Photography', page: 'photography.html', color: '#ff6b6b' },
-  { ...xiaola,  name: '小辣 · Mandarin', page: 'xiaola/index.html', color: '#7be0b5' },
   { ...saturn,  name: 'Videos',      page: 'videos.html',      color: '#ffe599' },
   { ...neptune, name: 'Projects',    page: 'projects.html',    color: '#64b5f6' },
 ];
@@ -195,8 +194,8 @@ function makeOrbitLine(radius) {
   return new THREE.Line(geo, mat);
 }
 
+scene.add(makeOrbitLine(60));
 scene.add(makeOrbitLine(80));
-scene.add(makeOrbitLine(115));
 scene.add(makeOrbitLine(150));
 scene.add(makeOrbitLine(230));
 
